@@ -13,7 +13,7 @@ import cfg
 import signal
  
 
-users = ["nl_kripp","itshafu","kolento","thijshs","amazhs","trumpsc"]
+users = ["nl_kripp","itshafu","kolento","thijshs","amazhs","trumpsc","day9tv","hotform"]
 
 process_list = []
 

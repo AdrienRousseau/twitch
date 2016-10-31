@@ -6,9 +6,9 @@ def chat(sock, msg):
 	sock -- the socket over which to send the message
 	msg  -- the message to be sent
 	"""
-	print "Trying to send"
+	print ("Trying to send")
 	sock.send("PRIVMSG #{} :{} \r\n".format(chan, msg))
-	print "PRIVMSG #{} :{}".format(chan, msg)
+	print("PRIVMSG #{} :{}".format(chan, msg))
 #chat(s,"FeelsGoodMan")
 
 import cfg
@@ -72,8 +72,8 @@ with open(file_name+".csv",'w') as f, open(file_name+'_error' +".csv",'w') as fe
 								break
 						time_last_msg = time.time()
 					except:
-						print "Error" + line
-						fe.write(str(math.floor(time.time())).encode("utf-8") + ";" + line.encode("utf-8") + '\n')
+						print("Error" + line)
+						fe.write(str(str(math.floor(time.time())).encode("utf-8")) + ";" + str(line.encode("utf-8")) + '\n')
 						pass
 		time.sleep(0.05)
 		if time.time() - time_last_msg >=120:
@@ -81,6 +81,7 @@ with open(file_name+".csv",'w') as f, open(file_name+'_error' +".csv",'w') as fe
 			status = ca.check_user(chan)
 			#Count again
 			if status == 0:
+				print("End aborted. Still online. Waiting 120 sec more before another check.")
 				time_last_msg = time.time()
 			else:
 				print("Stream Over")
