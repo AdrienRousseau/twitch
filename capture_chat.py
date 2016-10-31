@@ -18,6 +18,7 @@ import time
 import datetime
 import math
 import sys 
+import checking_alive as ca
 global chan
 
 RATE = (20/30) # messages per second
@@ -75,4 +76,13 @@ with open(file_name+".csv",'w') as f, open(file_name+'_error' +".csv",'w') as fe
 						fe.write(str(math.floor(time.time())).encode("utf-8") + ";" + line.encode("utf-8") + '\n')
 						pass
 		time.sleep(0.05)
+		if time.time() - time_last_msg >=120:
+			""" returns 0: online, 1: offline, 2: not found, 3: error """
+			status = ca.check_user(chan)
+			#Count again
+			if status == 0:
+				time_last_msg = time.time()
+			else:
+				print("Stream Over")
+				break
 		#no more messages

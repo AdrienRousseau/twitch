@@ -43,7 +43,6 @@ def loopcheck():
 			time.sleep(refresh) # 30 seconds
 		elif status == 0:
 			print(user,"online. stop.")
-			#subprocess.call(["livestreamer", "twitch.tv/"+user,quality,"-o",directory+filename])
 			subprocess.call(["python","capture_chat.py",user])
 			print("Stream is done. Going back to checking..")
 			time.sleep(15)
