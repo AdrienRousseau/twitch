@@ -9,7 +9,7 @@ def chat(sock, msg):
 	print "Trying to send"
 	sock.send("PRIVMSG #{} :{} \r\n".format(chan, msg))
 	print "PRIVMSG #{} :{}".format(chan, msg)
-
+#chat(s,"FeelsGoodMan")
 
 import cfg
 import socket
@@ -22,28 +22,32 @@ global chan
 
 RATE = (20/30) # messages per second
 
-# network functions go here
-
 #chan = cfg.CHAN
 chan = sys.argv[1]
 
-s = socket.socket()
-s.connect((cfg.HOST, cfg.PORT))
-s.send("PASS {}\r\n".format(cfg.PASS).encode("utf-8"))
-s.send("NICK {}\r\n".format(cfg.NICK).encode("utf-8"))
-s.send("JOIN #{}\r\n".format(chan).encode("utf-8"))
+def connect_socket():
+	s = socket.socket()
+	s.connect((cfg.HOST, cfg.PORT))
+	s.send("PASS {}\r\n".format(cfg.PASS).encode("utf-8"))
+	s.send("NICK {}\r\n".format(cfg.NICK).encode("utf-8"))
+	s.send("JOIN #{}\r\n".format(chan).encode("utf-8"))
+	return s
+
+s =connect_socket()
 
 CHAT_MSG=re.compile(r"^:\w+!\w+@\w+\.tmi\.twitch\.tv PRIVMSG #\w+ :")
 
-#chat(s,"FeelsGoodMan")
 
+#Creating the file name
 now = datetime.datetime.now()
 stamp = [str(x) for x in [now.day,now.month,now.hour,now.minute]]
-
 file_name =chan + '_' + "_".join(stamp)
+file_name = "data/" + file_name
 
+#Preparing the identifier to parse the message
 id2 = "PRIVMSG #"+chan +" :"
-time_till_last_msg = 0
+
+time_last_msg = time.time()
 
 with open(file_name+".csv",'w') as f, open(file_name+'_error' +".csv",'w') as fe:
 	while True:
@@ -60,13 +64,15 @@ with open(file_name+".csv",'w') as f, open(file_name+'_error' +".csv",'w') as fe
 						message = line[line.index(id2)+len(id2):]
 						if username !='idenoca' and username != 'tmi':
 							f.write(username+";"+str(int(math.floor(time.time()))) + ";" + message)
-						print(username + ": " + message)
+						print(chan + " " + username + ": " + message)
 						for pattern in cfg.PATT:
 							if re.match(pattern, message):
-								print "LUL"
+								#print "LUL"
 								break
+						time_last_msg = time.time()
 					except:
 						print "Error" + line
 						fe.write(str(math.floor(time.time())).encode("utf-8") + ";" + line.encode("utf-8") + '\n')
 						pass
 		time.sleep(0.05)
+		#no more messages
