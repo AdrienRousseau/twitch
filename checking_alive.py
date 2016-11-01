@@ -29,6 +29,22 @@ def check_user(user):
 			status = 3
 	return status
 
+def get_game_viewers(user):
+	global info
+	url = 'https://api.twitch.tv/kraken/streams/' + user
+	request = urllib.request.Request(url, headers={"Client-ID" : cfg.CLIENTID})
+	try:
+		info = json.loads(urlopen(request).read().decode('utf-8'))
+		if info['stream'] == None:
+			return None, None
+		else:
+			return info['stream']['game'],info['stream']['viewers']
+	except URLError as e:
+		if e.reason == 'Not Found' or e.reason == 'Unprocessable Entity':
+			return None, None
+		else:
+			return None, None
+
 
 def loopcheck():
 	while True:

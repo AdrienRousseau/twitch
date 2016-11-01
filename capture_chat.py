@@ -49,8 +49,9 @@ file_name = "data/" + file_name
 id2 = "PRIVMSG #"+chan +" :"
 
 time_last_msg = time.time()
+time_viewer = time.time() - 18000;
 
-with open(file_name+".csv",'w') as f, open(file_name+'_error' +".csv",'w') as fe:
+with open(file_name+".csv",'w') as f, open(file_name+'_error' +".csv",'w') as fe,open(file_name+'_viewer' +".csv",'w') as fv:
 	while True:
 		response = s.recv(4096).decode("utf-8")
 		if response == "PING :tmi.twitch.tv\r\n":
@@ -76,13 +77,21 @@ with open(file_name+".csv",'w') as f, open(file_name+'_error' +".csv",'w') as fe
 						fe.write(str(str(math.floor(time.time())).encode("utf-8")) + ";" + str(line.encode("utf-8")) + '\n')
 						pass
 		time.sleep(0.05)
+		if time.time() - time_viewer >= 18000:
+			game,view = ca.get_game_viewers(chan)
+			time_viewer = time.time()
+			fv.write(str(str(math.floor(time.time())).encode("utf-8")) + ";" + str(chan.encode("utf-8")) + ";" + str(game.encode("utf-8")) + ";" + str(view) + '\n')
+			print(str(str(math.floor(time.time())).encode("utf-8")) + ";" + str(chan.encode("utf-8")) + ";" + str(game.encode("utf-8")) + ";" + str(view))
+
 		if time.time() - time_last_msg >=120:
 			""" returns 0: online, 1: offline, 2: not found, 3: error """
 			status = ca.check_user(chan)
 			#Count again
 			if status == 0:
-				print("End aborted. Still online. Waiting 120 sec more before another check.")
+				print(chan + "End aborted. Still online. Waiting 120 sec more before another check.")
 				time_last_msg = time.time()
+				s.close()
+				s =connect_socket()
 			else:
 				print("Stream Over")
 				break
